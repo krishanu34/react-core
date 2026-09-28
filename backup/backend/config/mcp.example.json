@@ -1,0 +1,31 @@
+{
+  "//": "Copy to .mcp.json (project) or .mcp.local.json (personal). Claude Code's exact format.",
+
+  "mcpServers": {
+    "github": {
+      "//": "Remote HTTP MCP server — reached from the DevSphere backend.",
+      "url": "https://api.githubcopilot.com/mcp/",
+      "headers": { "Authorization": "Bearer ${GITHUB_MCP_TOKEN}" }
+    },
+
+    "filesystem": {
+      "//": "Local stdio server — launched on the USER's machine via the daemon.",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "."]
+    },
+
+    "postgres-remote": {
+      "//": "Legacy HTTP+SSE transport — set type to sse.",
+      "type": "sse",
+      "url": "https://mcp.example.com/postgres/sse",
+      "headers": { "Authorization": "Bearer ${PG_MCP_TOKEN}" }
+    },
+
+    "disabled-example": {
+      "//": "Turn a server off without deleting it.",
+      "enabled": false,
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-everything"]
+    }
+  }
+}

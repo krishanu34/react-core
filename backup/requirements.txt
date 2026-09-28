@@ -1,0 +1,107 @@
+## Consolidated parent dependencies for all backend modules
+## Modules covered:
+## - user-story-generator
+## - design-document-generator
+## - code_builder
+## - legacy_modernization_backend
+## - common_utils
+##
+
+# Web/API runtime
+fastapi>=0.110.0,<1.0.0
+uvicorn[standard]>=0.27.0,<1.0.0
+gunicorn
+websockets
+python-multipart>=0.0.9
+
+# Core config and models
+pydantic>=2.6.0,<3.0.0
+pydantic-settings>=2.1.0,<3.0.0
+python-dotenv>=1.0.0,<2.0.0
+PyYAML>=6.0.1,<7.0.0
+
+# Database
+sqlalchemy>=2.0.0,<3.0.0
+psycopg2-binary>=2.9.9,<3.0.0
+asyncpg>=0.29.0,<1.0.0
+pgvector>=0.2.4,<1.0.0
+
+# Auth and security
+PyJWT>=2.8.0,<3.0.0
+bcrypt
+
+# LLM and agent ecosystem
+agent-framework==1.3.0
+openai==2.30.0
+
+langchain-postgres
+langchain-core
+langchain-openai
+langchain-ollama
+
+
+
+tiktoken>=0.6.0,<1.0.0
+
+# Retrieval, parsing, and processing
+numpy
+networkx>=3.3
+faiss-cpu
+
+javalang
+tree-sitter
+tree-sitter-python
+tree-sitter-java
+tree-sitter-javascript
+tree-sitter-typescript
+tree-sitter-c-sharp
+tree-sitter-go
+tree-sitter-ruby
+tree-sitter-rust
+tree-sitter-cpp
+tree-sitter-c
+tree-sitter-php
+tree-sitter-kotlin
+tree-sitter-swift
+# Optional / additional grammars — each is loaded best-effort by
+# code_builder.analyzer.ast_parser.  Add or remove freely; missing
+# packages are skipped silently at import time.
+tree-sitter-scala
+tree-sitter-bash
+tree-sitter-lua
+tree-sitter-html
+tree-sitter-css
+tree-sitter-json
+tree-sitter-yaml
+tree-sitter-toml
+tree-sitter-sql
+tree-sitter-dockerfile
+tree-sitter-hcl
+tree-sitter-markdown
+pdfplumber
+PyMuPDF                # PDF image & vector diagram extraction
+Pillow                 # Image quality analysis
+python-docx
+mammoth                # DOCX → HTML conversion
+beautifulsoup4
+reportlab
+pywin32
+
+# Integrations and I/O
+requests
+httpx>=0.27.0,<1.0.0
+aiohttp
+urllib3
+azure-storage-blob
+
+# Logging
+structlog
+python-json-logger
+
+#devsphere ai dependencies
+fastapi
+uvicorn
+httpx
+pydantic
+python-dotenv
+python-multipart

@@ -1,0 +1,2 @@
+// Route protection moved to src/proxy.ts (Next.js 16+ convention).
+// This file is intentionally empty.

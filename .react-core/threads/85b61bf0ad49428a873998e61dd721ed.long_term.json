@@ -1,0 +1,12 @@
+[
+  {
+    "content": "For TELCO-6117, the user explicitly directed that unresolved requirements (wait-time target, accessibility standard, handoff rules, peak-load targets, privacy/security controls, brand reference, and browser/device scope) remain marked TBD. Formal pass/fail thresholds must not be invented; design should use exploratory/placeholder checks until requirements are defined.",
+    "tags": [
+      "TELCO-6117",
+      "requirements",
+      "tbd",
+      "qa-decision"
+    ],
+    "created_at": "2026-09-18T19:31:24.382821+00:00"
+  }
+]

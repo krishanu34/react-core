@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charSet="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="/_next/static/css/027133cdc7ec5f17.css" data-precedence="next" />
+    <link rel="preload" as="script" fetchPriority="low" href="/_next/static/chunks/webpack-a2a7106df7a920d1.js" />
+    <script src="/_next/static/chunks/4bd1b696-c023c6e3521b1417.js" async=""></script>
+    <script src="/_next/static/chunks/255-37e0f0325134c4d7.js" async=""></script>
+    <script src="/_next/static/chunks/main-app-ead14955cefc6c4b.js" async=""></script>
+    <script src="/_next/static/chunks/513-77f81deaf9476237.js" async=""></script>
+    <script src="/_next/static/chunks/app/page-878a25b1a7edaeb0.js" async=""></script>
+    <title>ReACT-core — AI for QA</title>
+    <meta name="description"
+        content="Conversational AI QA agent — turn requirements into scenarios, cases and automation." />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="icon" href="/favicon.ico" />
+    <script>window.__ENV__ = { "API_BASE_URL": "http://localhost:8080" };</script>
+    <script src="/_next/static/chunks/polyfills-42372ed130431b0a.js" noModule=""></script>
+</head>
+
+<body>
+    <div hidden=""><!--$--><!--/$--></div>
+    <div class="flex h-screen flex-col bg-bell-chrome">
+        <header class="sticky top-0 z-20 border-b border-bell-blue-dark bg-bell-blue text-white">
+            <div class="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
+                <div class="flex items-center gap-3 "><img alt="Bell" width="52" height="30" decoding="async"
+                        data-nimg="1" style="color:transparent;height:30px;width:auto" src="/bell-logo.svg" /><span
+                        aria-hidden="true" class="h-6 w-px bg-white/30"></span><span
+                        class="text-sm font-medium leading-tight text-white">AI for QA</span></div>
+                <nav aria-label="Primary" class="hidden items-center gap-6 text-sm font-medium text-white/85 md:flex"><a
+                        class="hover:text-white" href="#">Conversations</a><a class="hover:text-white"
+                        href="#">Artefacts</a><a class="hover:text-white" href="#">Knowledge</a><a
+                        class="hover:text-white" href="#">Docs</a></nav>
+                <div class="flex items-center gap-2"><button type="button" aria-label="Open settings" title="Settings"
+                        class="flex h-8 w-8 items-center justify-center rounded-full text-white/85 transition-colors hover:bg-white/10 hover:text-white"><svg
+                            xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="lucide lucide-settings" aria-hidden="true">
+                            <path
+                                d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z">
+                            </path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg></button><span aria-hidden="true"
+                        class="flex h-8 w-8 items-center justify-center rounded-full bg-white text-sm font-semibold text-bell-blue"
+                        title="Admin">A</span></div>
+            </div>
+        </header>
+        <main class="flex min-h-0 flex-1 flex-col">
+            <section class="mx-auto flex min-h-0 w-full max-w-4xl flex-1 flex-col gap-4 px-4 py-6 sm:px-6">
+                <div class="bell-scroll min-h-0 flex-1 overflow-y-auto rounded-[var(--radius-bell-lg)] border border-bell-border bg-bell-surface p-4 shadow-[var(--shadow-bell-sm)] sm:p-6"
+                    role="list" aria-label="Conversation">
+                    <div class="mx-auto flex max-w-2xl flex-col items-center gap-6 py-10 text-center">
+                        <div
+                            class="flex h-14 w-14 items-center justify-center rounded-full bg-bell-blue-soft text-bell-blue">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="lucide lucide-sparkles" aria-hidden="true">
+                                <path
+                                    d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z">
+                                </path>
+                                <path d="M20 3v4"></path>
+                                <path d="M22 5h-4"></path>
+                                <path d="M4 17v2"></path>
+                                <path d="M5 18H3"></path>
+                            </svg></div>
+                        <div>
+                            <h1 class="text-2xl font-semibold tracking-tight text-bell-ink sm:text-3xl">Start a
+                                conversation</h1>
+                            <p class="mt-2 text-sm text-bell-slate sm:text-base">Attach requirements, paste a Jira link,
+                                or describe the feature you want tested. ReACT-core will plan, design and generate the
+                                QA artefacts — pausing at each checkpoint for your review.</p>
+                        </div>
+                        <div class="grid w-full grid-cols-1 gap-2 sm:grid-cols-2"><button type="button"
+                                class="rounded-[var(--radius-bell-lg)] border border-bell-border bg-bell-surface p-3 text-left text-sm text-bell-slate transition-colors hover:border-bell-blue hover:bg-bell-blue-soft hover:text-bell-blue">Design
+                                test scenarios for a checkout flow with card and wallet payments.</button><button
+                                type="button"
+                                class="rounded-[var(--radius-bell-lg)] border border-bell-border bg-bell-surface p-3 text-left text-sm text-bell-slate transition-colors hover:border-bell-blue hover:bg-bell-blue-soft hover:text-bell-blue">Generate
+                                functional test cases from the requirement I paste.</button><button type="button"
+                                class="rounded-[var(--radius-bell-lg)] border border-bell-border bg-bell-surface p-3 text-left text-sm text-bell-slate transition-colors hover:border-bell-blue hover:bg-bell-blue-soft hover:text-bell-blue">Draft
+                                a Playwright automation skeleton for login and 2FA.</button><button type="button"
+                                class="rounded-[var(--radius-bell-lg)] border border-bell-border bg-bell-surface p-3 text-left text-sm text-bell-slate transition-colors hover:border-bell-blue hover:bg-bell-blue-soft hover:text-bell-blue">Summarise
+                                acceptance criteria from JIRA-1234 and propose edge cases.</button></div>
+                    </div>
+                </div>
+                <form
+                    class="rounded-[var(--radius-bell-lg)] border border-bell-border bg-bell-surface shadow-[var(--shadow-bell-md)]">
+                    <div class="flex items-end gap-2 px-3 py-2"><button type="button" aria-label="Attach files"
+                            title="Attach files"
+                            class="flex h-10 w-10 shrink-0 items-center justify-center rounded-[var(--radius-bell-pill)] text-bell-slate transition-colors hover:bg-bell-chrome hover:text-bell-blue disabled:opacity-50"><svg
+                                xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="lucide lucide-paperclip" aria-hidden="true">
+                                <path d="M13.234 20.252 21 12.3"></path>
+                                <path
+                                    d="m16 6-8.414 8.586a2 2 0 0 0 0 2.828 2 2 0 0 0 2.828 0l8.414-8.586a4 4 0 0 0 0-5.656 4 4 0 0 0-5.656 0l-8.415 8.585a6 6 0 1 0 8.486 8.486">
+                                </path>
+                            </svg></button><input type="file" multiple=""
+                            accept=".pdf,.docx,.txt,.md,.csv,.json,.html,.htm" class="hidden" /><textarea rows="1"
+                            placeholder="Describe the QA task, or ask a question…"
+                            class="max-h-40 flex-1 resize-none border-0 bg-transparent px-2 py-2 text-[15px] leading-6 text-bell-ink placeholder:text-bell-muted focus:outline-none disabled:opacity-60"></textarea><button
+                            type="submit" aria-label="Send" disabled=""
+                            class="flex h-10 items-center gap-2 rounded-[var(--radius-bell-pill)] bg-bell-blue px-4 text-sm font-medium text-white transition-colors hover:bg-bell-blue-dark disabled:cursor-not-allowed disabled:bg-bell-border disabled:text-bell-muted"><span
+                                class="hidden sm:inline">Send</span><svg xmlns="http://www.w3.org/2000/svg" width="16"
+                                height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-send"
+                                aria-hidden="true">
+                                <path
+                                    d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z">
+                                </path>
+                                <path d="m21.854 2.147-10.94 10.939"></path>
+                            </svg></button></div>
+                    <p class="border-t border-bell-border px-3 py-1.5 text-[11px] text-bell-muted">Press <kbd
+                            class="rounded bg-bell-chrome px-1">Enter</kbd> to send,<kbd
+                            class="ml-1 rounded bg-bell-chrome px-1">Shift + Enter</kbd> <!-- -->for a new line.
+                        Supported: PDF · DOCX · TXT · MD · CSV · JSON · HTML.</p>
+                </form>
+            </section>
+        </main>
+    </div><!--$--><!--/$-->
+    <script src="/_next/static/chunks/webpack-a2a7106df7a920d1.js" id="_R_" async=""></script>
+    <script>(self.__next_f = self.__next_f || []).push([0])</script>
+    <script>self.__next_f.push([1, "1:\"$Sreact.fragment\"\n2:I[9766,[],\"\"]\n3:I[8924,[],\"\"]\n4:I[1069,[\"513\",\"static/chunks/513-77f81deaf9476237.js\",\"974\",\"static/chunks/app/page-878a25b1a7edaeb0.js\"],\"Header\"]\n5:I[1208,[\"513\",\"static/chunks/513-77f81deaf9476237.js\",\"974\",\"static/chunks/app/page-878a25b1a7edaeb0.js\"],\"Chat\"]\n6:I[4431,[],\"OutletBoundary\"]\n8:I[5278,[],\"AsyncMetadataOutlet\"]\na:I[4431,[],\"ViewportBoundary\"]\nc:I[4431,[],\"MetadataBoundary\"]\nd:\"$Sreact.suspense\"\nf:I[7150,[],\"\"]\n10:I[622,[],\"IconMark\"]\n:HL[\"/_next/static/css/027133cdc7ec5f17.css\",\"style\"]\n"])</script>
+    <script>self.__next_f.push([1, "0:{\"P\":null,\"b\":\"FefvOrFAZtUK2wPVObK_H\",\"p\":\"\",\"c\":[\"\",\"\"],\"i\":false,\"f\":[[[\"\",{\"children\":[\"__PAGE__\",{}]},\"$undefined\",\"$undefined\",true],[\"\",[\"$\",\"$1\",\"c\",{\"children\":[[[\"$\",\"link\",\"0\",{\"rel\":\"stylesheet\",\"href\":\"/_next/static/css/027133cdc7ec5f17.css\",\"precedence\":\"next\",\"crossOrigin\":\"$undefined\",\"nonce\":\"$undefined\"}]],[\"$\",\"html\",null,{\"lang\":\"en\",\"children\":[[\"$\",\"head\",null,{\"children\":[\"$\",\"script\",null,{\"dangerouslySetInnerHTML\":{\"__html\":\"window.__ENV__ = {\\\"API_BASE_URL\\\":\\\"http://localhost:8080\\\"};\"}}]}],[\"$\",\"body\",null,{\"children\":[\"$\",\"$L2\",null,{\"parallelRouterKey\":\"children\",\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L3\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":[[[\"$\",\"title\",null,{\"children\":\"404: This page could not be found.\"}],[\"$\",\"div\",null,{\"style\":{\"fontFamily\":\"system-ui,\\\"Segoe UI\\\",Roboto,Helvetica,Arial,sans-serif,\\\"Apple Color Emoji\\\",\\\"Segoe UI Emoji\\\"\",\"height\":\"100vh\",\"textAlign\":\"center\",\"display\":\"flex\",\"flexDirection\":\"column\",\"alignItems\":\"center\",\"justifyContent\":\"center\"},\"children\":[\"$\",\"div\",null,{\"children\":[[\"$\",\"style\",null,{\"dangerouslySetInnerHTML\":{\"__html\":\"body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid rgba(0,0,0,.3)}@media (prefers-color-scheme:dark){body{color:#fff;background:#000}.next-error-h1{border-right:1px solid rgba(255,255,255,.3)}}\"}}],[\"$\",\"h1\",null,{\"className\":\"next-error-h1\",\"style\":{\"display\":\"inline-block\",\"margin\":\"0 20px 0 0\",\"padding\":\"0 23px 0 0\",\"fontSize\":24,\"fontWeight\":500,\"verticalAlign\":\"top\",\"lineHeight\":\"49px\"},\"children\":404}],[\"$\",\"div\",null,{\"style\":{\"display\":\"inline-block\"},\"children\":[\"$\",\"h2\",null,{\"style\":{\"fontSize\":14,\"fontWeight\":400,\"lineHeight\":\"49px\",\"margin\":0},\"children\":\"This page could not be found.\"}]}]]}]}]],[]],\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]}]]}]]}],{\"children\":[\"__PAGE__\",[\"$\",\"$1\",\"c\",{\"children\":[[\"$\",\"div\",null,{\"className\":\"flex h-screen flex-col bg-bell-chrome\",\"children\":[[\"$\",\"$L4\",null,{}],[\"$\",\"main\",null,{\"className\":\"flex min-h-0 flex-1 flex-col\",\"children\":[\"$\",\"$L5\",null,{}]}]]}],null,[\"$\",\"$L6\",null,{\"children\":[\"$L7\",[\"$\",\"$L8\",null,{\"promise\":\"$@9\"}]]}]]}],{},null,false]},null,false],[\"$\",\"$1\",\"h\",{\"children\":[null,[[\"$\",\"$La\",null,{\"children\":\"$Lb\"}],null],[\"$\",\"$Lc\",null,{\"children\":[\"$\",\"div\",null,{\"hidden\":true,\"children\":[\"$\",\"$d\",null,{\"fallback\":null,\"children\":\"$Le\"}]}]}]]}],false]],\"m\":\"$undefined\",\"G\":[\"$f\",[]],\"s\":false,\"S\":false}\n"])</script>
+    <script>self.__next_f.push([1, "b:[[\"$\",\"meta\",\"0\",{\"charSet\":\"utf-8\"}],[\"$\",\"meta\",\"1\",{\"name\":\"viewport\",\"content\":\"width=device-width, initial-scale=1\"}]]\n7:null\n9:{\"metadata\":[[\"$\",\"title\",\"0\",{\"children\":\"ReACT-core — AI for QA\"}],[\"$\",\"meta\",\"1\",{\"name\":\"description\",\"content\":\"Conversational AI QA agent — turn requirements into scenarios, cases and automation.\"}],[\"$\",\"link\",\"2\",{\"rel\":\"shortcut icon\",\"href\":\"/favicon.ico\"}],[\"$\",\"link\",\"3\",{\"rel\":\"icon\",\"href\":\"/favicon.ico\"}],[\"$\",\"$L10\",\"4\",{}]],\"error\":null,\"digest\":\"$undefined\"}\ne:\"$9:metadata\"\n"])</script>
+</body>
+
+</html>

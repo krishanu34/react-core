@@ -1,0 +1,15 @@
+# Env files
+.env
+.env.local
+
+# Python cache & test artefacts
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+
+# State dir (per-thread workspaces, vector store, App DB)
+.react-core/

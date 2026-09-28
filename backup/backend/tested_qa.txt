@@ -1,0 +1,49 @@
+Category 1: Workspace Analysis
+1. "Analyze my current workspace and give me a summary"
+2. "What does this project do? Give me an overview"
+3. "What technologies and frameworks does this project use?"
+4. "Show me the project structure"
+5. "How many Python files are in this project?"
+
+Category 2: File Search & Summary
+6. "Find and summarize the orchestrator.py file"
+7. "Search for all files that contain 'class Agent'"
+8. "What endpoints does apis.py expose?"
+9. "Find all TODO comments in the codebase"
+10. "Which files import FastAPI?"
+
+Category 3: Generate Reports (.md output)
+11. "Create a summary.md file explaining this codebase"
+12. "Analyze the code and create a gap_analysis.md"
+13. "Generate a documentation file for the tools/ directory"
+14. "Create an architecture.md describing how the agent works"
+15. "Write a report of all the API endpoints in this project"
+
+Category 4: Code Fixes
+11. "Create a summary.md file explaining this codebase"-Done
+12. "Analyze the code and create a gap_analysis.md"-Done
+13. "Generate a documentation file for the tools/ directory"
+14. "Create an architecture.md describing how the agent works"
+15. "Write a report of all the API endpoints in this project"
+
+Category 5: Run Commands
+21. "Run git status and tell me what's changed"
+22. "Run python -m pytest and show me the results"
+23. "Check if all Python files have valid syntax"
+24. "Run pip list and tell me what packages are installed"
+
+Category 6: Multi-step / Complex
+25. "Read all the agent files, find common patterns, and create a best_practices.md"
+26. "Compare orchestrator.py and react_agent.py — what's the difference?"
+27. "Find all error handling in the codebase and create a report"
+28. "Analyze the memory system and suggest improvements in a review.md"
+
+Category 7: External Workspace
+29. (with workspace_path param) "Analyze this workspace and create a summary.md" - Done
+30. (with workspace_path param) "What gaps exist in this codebase? Create gap_analysis.md" - Done
+31. (with workspace_path param) "Search for all TODO comments in this external workspace"
+32. (with workspace_path param) "Generate a report of all API endpoints in this external workspace"
+
+
+Not worked:
+List all the file present is workspace give me a purpose of each file in a .md file 

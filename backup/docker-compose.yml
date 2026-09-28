@@ -1,0 +1,50 @@
+# DevSphere AI — local stack: postgres + backend + ui.
+# Copy backend/.env.example -> backend/.env and fill secrets before `docker compose up`.
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: ${DB_NAME:-devsphere_ai}
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      # Applies the unified schema on first boot of an empty data volume.
+      - ./db/migrations/001_init.sql:/docker-entrypoint-initdb.d/001_init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres} -d ${DB_NAME:-devsphere_ai}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build: ./backend
+    env_file: ./backend/.env
+    environment:
+      DB_HOST: postgres
+    ports:
+      - "8003:8003"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: >
+      gunicorn app.main:app
+      --worker-class uvicorn.workers.UvicornWorker
+      --bind 0.0.0.0:8003 --workers 1 --timeout 120
+
+  ui:
+    build: ./ui
+    environment:
+      NEXT_PUBLIC_DEVSPHERE_API_URL: http://localhost:8003
+      WORKSPACE_STUDIO_API_URL: http://backend:8003
+    # The image's server listens on 3000 (ui/Dockerfile sets PORT=3000); 3002 is
+    # only the host-side port, kept clear of the DevAccel UI on 3000.
+    ports:
+      - "3002:3000"
+    depends_on:
+      - backend
+
+volumes:
+  pgdata:

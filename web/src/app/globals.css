@@ -1,0 +1,81 @@
+@import "tailwindcss";
+
+/*
+  Bell.ca-inspired theme tokens.
+  Palette derived from Bell Canada's public brand:
+    - Bell Blue     : #0057B8  (primary)
+    - Deep Blue     : #003D82  (hover / accents)
+    - Sky Blue      : #E8F1FB  (surfaces)
+    - Ink           : #1A1A1A  (body text)
+    - Slate         : #4A4A4A  (secondary text)
+    - Muted         : #767676  (tertiary text)
+    - Border        : #DDDDDD  (dividers)
+    - Surface       : #FFFFFF  (page)
+    - Off-surface   : #F5F7FA  (chrome)
+    - Focus         : #FFB81C  (Bell accent yellow, used sparingly)
+*/
+
+@theme {
+  --color-bell-blue: #0057b8;
+  --color-bell-blue-dark: #003d82;
+  --color-bell-blue-soft: #e8f1fb;
+  --color-bell-ink: #1a1a1a;
+  --color-bell-slate: #4a4a4a;
+  --color-bell-muted: #767676;
+  --color-bell-border: #dddddd;
+  --color-bell-surface: #ffffff;
+  --color-bell-chrome: #f5f7fa;
+  --color-bell-accent: #ffb81c;
+
+  --font-bell-sans:
+    "Inter", "Helvetica Neue", "Helvetica", "Arial", system-ui, sans-serif;
+
+  --radius-bell: 4px;
+  --radius-bell-lg: 8px;
+  --radius-bell-pill: 999px;
+
+  --shadow-bell-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-bell-md: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-bell-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  font-family: var(--font-bell-sans);
+  color: var(--color-bell-ink);
+  background: var(--color-bell-chrome);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+button {
+  font-family: inherit;
+}
+
+/* Focus ring — Bell accent yellow, subtle */
+:where(button, a, input, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--color-bell-accent);
+  outline-offset: 2px;
+  border-radius: var(--radius-bell);
+}
+
+/* Thin scrollbars in chat areas */
+.bell-scroll::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.bell-scroll::-webkit-scrollbar-thumb {
+  background: #c8c8c8;
+  border-radius: var(--radius-bell-pill);
+}
+.bell-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}

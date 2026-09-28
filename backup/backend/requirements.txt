@@ -1,0 +1,44 @@
+fastapi
+azure-storage-blob
+uvicorn
+httpx
+pydantic
+pydantic-settings
+python-dotenv
+python-multipart
+sqlalchemy
+psycopg2-binary
+PyJWT
+bcrypt
+gunicorn
+tiktoken
+# Model Context Protocol — client (consume external MCP servers) + server
+# (expose our tools). Used by devsphere_ai/mcp_integration/. Official SDK; the
+# one deliberate exception to the "no SDK / raw httpx" ethos because MCP is a
+# real protocol (JSON-RPC handshake, capability negotiation, versioning).
+mcp==1.28.1
+# Optional: cross-worker signal bus (only used when REDIS_URL is set)
+redis
+# Document extraction (ingestion/). Every one of these is import-guarded: a
+# host that hasn't installed them still ingests every format, because the
+# OOXML formats are ZIP+XML and ingestion/extractors.py has a stdlib fallback
+# for each. What these buy is quality, and one capability that has no fallback:
+#   pdfplumber   — PDF text, the best of the three backends tried
+#   pymupdf      — PDF text AND rasterising a SCANNED pdf's pages for vision.
+#                  Without it, a PDF with no text layer cannot be read at all.
+#   python-docx  — .docx tables and heading levels (fallback flattens them)
+#   openpyxl     — .xlsx with formula results (fallback reads cached values)
+#   python-pptx  — .pptx speaker notes (fallback reads slide text only)
+#   pillow       — image dimensions, format conversion (BMP/TIFF/HEIC → PNG)
+#                  and downscaling oversized images to fit the vision limit
+pdfplumber
+pymupdf
+python-docx
+openpyxl
+python-pptx
+pillow
+# Tests. pytest-asyncio is required, not optional: workspace_studio/tests uses
+# `async def` tests, which plain pytest reports as failures rather than skips.
+#   cd backend/workspace_studio && PYTHONPATH=.. pytest tests --asyncio-mode=auto
+pytest
+pytest-asyncio

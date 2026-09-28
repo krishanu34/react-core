@@ -1,0 +1,86 @@
+export const queryKeys = {
+  projects: {
+    all: () => ["projects"] as const,
+    detail: (id: number) => ["projects", id] as const,
+    checkName: (name: string) => ["projects", "check-name", name] as const,
+  },
+  sessions: {
+    list: (projectId: number, status?: string) => ["sessions", projectId, { status }] as const,
+    detail: (id: number) => ["sessions", id] as const,
+  },
+  jobs: {
+    list: (projectId?: number, sessionId?: number) => ["jobs", { projectId, sessionId }] as const,
+    status: (jobId: string) => ["jobs", jobId, "status"] as const,
+    result: (jobId: string) => ["jobs", jobId, "result"] as const,
+    artifactMap: (jobId: string) => ["jobs", jobId, "artifact-map"] as const,
+    storyImpact: (jobId: string) => ["jobs", jobId, "story-impact"] as const,
+    publishStatus: (jobId: string) => ["jobs", jobId, "publish-status"] as const,
+  },
+  documents: {
+    jobs: (projectId?: number) => projectId != null ? ["document-jobs", { projectId }] as const : ["document-jobs"] as const,
+    status: (jobId: string) => ["document-jobs", jobId, "status"] as const,
+    result: (jobId: string) => ["document-jobs", jobId, "result"] as const,
+    publishStatus: (jobId: string) => ["document-jobs", jobId, "publish-status"] as const,
+    approvedStories: (projectId: number) => ["document-jobs", "stories", projectId] as const,
+    approvedStorySessions: (projectId: number) => ["document-jobs", "story-sessions", projectId] as const,
+  },
+  codeBuilder: {
+    projects: () => ["cb-projects"] as const,
+    fileTree: (projectId: string) => ["cb-file-tree", projectId] as const,
+    file: (projectId: string, path: string) => ["cb-file", projectId, path] as const,
+    runs: () => ["cb-runs"] as const,
+    runStatus: (runId: string) => ["cb-runs", runId, "status"] as const,
+    outputTree: (runId: string) => ["cb-runs", runId, "tree"] as const,
+    modes: () => ["cb-modes"] as const,
+    reports: (runId: string) => ["cb-runs", runId, "reports"] as const,
+  },
+  admin: {
+    users: () => ["admin", "users"] as const,
+    roles: () => ["admin", "roles"] as const,
+    groups: () => ["admin", "groups"] as const,
+    models: () => ["admin", "models"] as const,
+    userGroups: (userId: number) => ["admin", "users", userId, "groups"] as const,
+    groupMembers: (groupId: number) => ["admin", "groups", groupId, "members"] as const,
+    groupProjects: (groupId: number) => ["admin", "groups", groupId, "projects"] as const,
+    allProjects: () => ["admin", "all-projects"] as const,
+    dbMonitor: () => ["admin", "db-monitor"] as const,
+    dbRecent: (filters: Record<string, unknown>) => ["admin", "db-monitor", "recent", filters] as const,
+  },
+  ingest: {
+    status: (projectId: number) => ["ingest", "status", projectId] as const,
+    codeGraph: (projectId: number) => ["ingest", "code-graph", projectId] as const,
+  },
+  cbv2: {
+    modelConfigStatus: (projectId: number) => ["cbv2", "model-config-status", projectId] as const,
+    configs: () => ["cbv2", "configs"] as const,
+    sourceFiles: () => ["cbv2", "source-files"] as const,
+    approvedArtifacts: (projectId: number) => ["cbv2", "approved-artifacts", projectId] as const,
+    allApprovedArtifacts: (projectId: number) => ["cbv2", "all-approved-artifacts", projectId] as const,
+    documentArtifacts: (projectId: number) => ["cbv2", "document-artifacts", projectId] as const,
+  },
+  legacyMod: {
+    projects: () => ["legacy-mod", "projects"] as const,
+    codeContext: (projectId: number) => ["legacy-mod", "code-context", projectId] as const,
+    suggestions: (projectId: number) => ["legacy-mod", "suggestions", projectId] as const,
+  },
+  teams: (admin: boolean) => ["teams", { admin }] as const,
+  standards: () => ["standards"] as const,
+  standardsSummary: () => ["standards", "summary"] as const,
+  health: () => ["health"] as const,
+  historyPanel: (mode: string, projectId?: number | null, sessionId?: number | null) => ["history-panel", mode, projectId, sessionId] as const,
+  profile: () => ["profile"] as const,
+  activeModels: () => ["models", "active"] as const,
+  refinementHistory: (params: Record<string, unknown>) => ["refinement-history", params] as const,
+  artifactVersions: (artifactId: number) => ["artifact-versions", artifactId] as const,
+  vectorDb: {
+    projects:    ()                                      => ["vector-db", "projects"] as const,
+    collections: (projectId?: number)                   => ["vector-db", "collections", projectId] as const,
+    collection:  (name: string)                          => ["vector-db", "collections", name] as const,
+    records:     (name: string, p: Record<string, unknown>) => ["vector-db", "records", name, p] as const,
+    auditLogs:   (p: Record<string, unknown>)            => ["vector-db", "audit-logs", p] as const,
+  },
+};
+
+export type QueryKeys = typeof queryKeys;
+
+export default queryKeys;

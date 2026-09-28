@@ -1,0 +1,22 @@
+{
+  "name": "devaccel-daemon",
+  "version": "0.3.2",
+  "private": true,
+  "description": "DevAccel local daemon — native file I/O on 127.0.0.1 so clients (browser/CLI/IDE) can read & write the user's local workspace without HTTPS. Files never leave the machine.",
+  "bin": {
+    "devaccel": "./cli.js"
+  },
+  "type": "commonjs",
+  "scripts": {
+    "start": "node cli.js serve",
+    "test": "node --test",
+    "build": "node build-sea.mjs"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.1",
+    "postject": "^1.0.0-alpha.6"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

@@ -1,0 +1,42 @@
+# ── Python (backend) ─────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# ── Secrets / env ────────────────────────────────────────────────
+
+*.pem
+*.key
+
+# ── Node / UI ────────────────────────────────────────────────────
+node_modules/
+.next/
+out/
+*.tsbuildinfo
+
+# ── Daemon build artifacts (source only is committed) ────────────
+daemon/node_modules/
+daemon/dist/
+daemon/*.exe
+daemon/*.blob
+
+# ── Runtime / logs / local agent state ───────────────────────────
+logs/
+*.log
+.devaccel/
+.runtime/
+data/
+
+# ── OS / editor ──────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+.idea/
+*.swp
+backend/ARCHITECTURE_PLAN.md
+backend/CLAUDE.md
+backend/SPEC_DRIVEN_PLAN.md

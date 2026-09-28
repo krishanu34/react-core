@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+.idea/
+.vscode/
+.devaccel/
+logs/*.log
+logs/*.jsonl
+!logs/.gitkeep
+CLAUDE_CODE_REPLICATION_ROADMAP.md
+failing_case.txt
+upcoming_action.md
