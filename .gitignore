@@ -2,3 +2,6 @@
 .venv/*
 docs
 docs/*
+
+# Local agent state dir (SQLite, threads, generated workspaces) — never commit
+.react-core/

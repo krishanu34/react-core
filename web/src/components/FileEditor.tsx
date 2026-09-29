@@ -1,6 +1,6 @@
 "use client";
 
-import { AlertCircle, Check, FileWarning, Save, X } from "lucide-react";
+import { AlertCircle, Check, Code2, Eye, FileWarning, Save, X } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
 import {
@@ -11,6 +11,7 @@ import {
   readFile,
   writeFile,
 } from "@/lib/files";
+import { MarkdownContent } from "./MarkdownContent";
 
 /** Monaco is client-only and heavyweight — lazy-load with SSR disabled. */
 const MonacoEditor = dynamic(() => import("@monaco-editor/react"), {
@@ -42,6 +43,15 @@ export function FileEditor({ threadId, path, onSaved, onClose }: FileEditorProps
   const [issues, setIssues] = useState<ValidationIssue[]>([]);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [savedFlash, setSavedFlash] = useState(false);
+  const isMarkdown = path.toLowerCase().endsWith(".md");
+  // Markdown opens as a rendered doc by default; other files open in the editor.
+  const [mode, setMode] = useState<"preview" | "edit">(
+    isMarkdown ? "preview" : "edit",
+  );
+
+  useEffect(() => {
+    setMode(path.toLowerCase().endsWith(".md") ? "preview" : "edit");
+  }, [path]);
 
   useEffect(() => {
     let cancelled = false;
@@ -125,6 +135,38 @@ export function FileEditor({ threadId, path, onSaved, onClose }: FileEditorProps
           </p>
         </div>
         <div className="flex items-center gap-1">
+          {isMarkdown && (
+            <div className="mr-1 flex items-center rounded-[var(--radius-bell)] border border-bell-border p-0.5">
+              <button
+                type="button"
+                onClick={() => setMode("preview")}
+                className={
+                  "inline-flex items-center gap-1 rounded-[calc(var(--radius-bell)-2px)] px-2 py-0.5 text-xs font-medium transition-colors " +
+                  (mode === "preview"
+                    ? "bg-bell-blue-soft text-bell-blue"
+                    : "text-bell-muted hover:text-bell-slate")
+                }
+                title="Rendered preview"
+              >
+                <Eye size={12} aria-hidden />
+                Preview
+              </button>
+              <button
+                type="button"
+                onClick={() => setMode("edit")}
+                className={
+                  "inline-flex items-center gap-1 rounded-[calc(var(--radius-bell)-2px)] px-2 py-0.5 text-xs font-medium transition-colors " +
+                  (mode === "edit"
+                    ? "bg-bell-blue-soft text-bell-blue"
+                    : "text-bell-muted hover:text-bell-slate")
+                }
+                title="Edit source"
+              >
+                <Code2 size={12} aria-hidden />
+                Edit
+              </button>
+            </div>
+          )}
           <button
             type="button"
             onClick={handleSave}
@@ -166,26 +208,38 @@ export function FileEditor({ threadId, path, onSaved, onClose }: FileEditorProps
       {status.kind === "loaded" && (
         <div className="flex min-h-0 flex-1 flex-col">
           <div className="min-h-0 flex-1">
-            <MonacoEditor
-              height="100%"
-              language={language}
-              value={buffer}
-              onChange={(v) => {
-                setBuffer(v ?? "");
-                setDirty((v ?? "") !== status.file.content);
-                if (issues.length > 0) setIssues([]);
-                if (saveError) setSaveError(null);
-              }}
-              options={{
-                minimap: { enabled: false },
-                wordWrap: "on",
-                lineNumbers: "on",
-                scrollBeyondLastLine: false,
-                fontSize: 13,
-                automaticLayout: true,
-                tabSize: 2,
-              }}
-            />
+            {isMarkdown && mode === "preview" ? (
+              <div className="bell-scroll h-full overflow-y-auto px-6 py-5">
+                {buffer.trim() ? (
+                  <MarkdownContent content={buffer} />
+                ) : (
+                  <p className="text-sm italic text-bell-muted">
+                    This document is empty.
+                  </p>
+                )}
+              </div>
+            ) : (
+              <MonacoEditor
+                height="100%"
+                language={language}
+                value={buffer}
+                onChange={(v) => {
+                  setBuffer(v ?? "");
+                  setDirty((v ?? "") !== status.file.content);
+                  if (issues.length > 0) setIssues([]);
+                  if (saveError) setSaveError(null);
+                }}
+                options={{
+                  minimap: { enabled: false },
+                  wordWrap: "on",
+                  lineNumbers: "on",
+                  scrollBeyondLastLine: false,
+                  fontSize: 13,
+                  automaticLayout: true,
+                  tabSize: 2,
+                }}
+              />
+            )}
           </div>
 
           {(issues.length > 0 || saveError) && (

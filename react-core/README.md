@@ -73,6 +73,16 @@ Every tool runs server-side, sandboxed to `workspace_path`:
 | `delete_entry` | Delete a file or folder |
 | `rename_entry` | Rename / move within the workspace |
 | `ask_user` | Ask the user a question mid-run (via SSE `user_question` event) |
+| `manage_plan` | Post/update a non-blocking task checklist (via SSE `plan_update` event) for multi-part requests |
+| `analyze_requirements` | Structured breakdown of the requirement corpus (ACs, risks, gaps) — QA profile |
+| `write_artefact` | Write any JSON + Markdown artefact pair (analysis, test_strategy, model artefacts) — QA profile |
+| `generate_gherkin` | Render Gherkin scenarios with traceability tags + AC-coverage enforcement — QA profile |
+| `generate_test_cases` | Functional/manual test-case suite with numbered steps + AC-coverage enforcement — QA profile |
+| `generate_automation` | Scaffold a runnable automation bundle for a framework from scenarios/features — QA profile |
+| `generate_nfr_tests` | Scaffold performance (k6/JMeter/Gatling/Locust) or security (OWASP/ZAP) test assets — QA profile |
+| `execute_tests` | Run a suite and parse JUnit XML / stdout into a TestReport artefact (execution→report loop) — QA profile |
+| `build_traceability_matrix` | Requirement→test→result matrix (RTM) as JSON + Markdown + CSV — QA profile |
+| `export_test_cases` | Export a test-case suite to CSV (generic / TestRail / Xray) — QA profile |
 
 Register a new tool by subclassing `react_core.tools.base.BaseTool` and adding
 its class to `_DEFAULT_TOOL_CLASSES` in `react_core/tools/registry.py`.

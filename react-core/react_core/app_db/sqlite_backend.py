@@ -29,6 +29,7 @@ from .models import (
     IndexedSource,
     Message,
     Org,
+    Project,
     Thread,
     User,
     VectorChunk,
@@ -36,6 +37,7 @@ from .models import (
 
 _DEFAULT_ORG_ID = "org-default"
 _DEFAULT_USER_ID = "admin"
+_DEFAULT_PROJECT_ID = "1"
 
 
 def _utcnow() -> str:
@@ -76,6 +78,16 @@ CREATE TABLE IF NOT EXISTS user_credentials (
   updated_at TEXT NOT NULL,
   UNIQUE(user_id, provider, base_url)
 );
+
+CREATE TABLE IF NOT EXISTS projects (
+  id TEXT PRIMARY KEY,
+  org_id TEXT NOT NULL,
+  name TEXT NOT NULL,
+  description TEXT,
+  created_at TEXT NOT NULL,
+  updated_at TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS ix_projects_org ON projects(org_id, updated_at DESC);
 
 CREATE TABLE IF NOT EXISTS threads (
   id TEXT PRIMARY KEY,
@@ -211,6 +223,15 @@ class SqliteAppDB(AppDBProtocol):
                     "INSERT INTO users (id, org_id, name, email, created_at) VALUES (?, ?, ?, ?, ?)",
                     (_DEFAULT_USER_ID, _DEFAULT_ORG_ID, "Admin", None, now),
                 )
+            # Pilot: seed a default project so runs are scoped without the user
+            # having to create or pick one.
+            proj = self._conn.execute("SELECT id FROM projects WHERE id = ?", (_DEFAULT_PROJECT_ID,)).fetchone()
+            if proj is None:
+                self._conn.execute(
+                    "INSERT INTO projects (id, org_id, name, description, created_at, updated_at) "
+                    "VALUES (?, ?, ?, ?, ?, ?)",
+                    (_DEFAULT_PROJECT_ID, _DEFAULT_ORG_ID, "Default Project", None, now, now),
+                )
 
     # ---- orgs / users ----------------------------------------------------
     def get_default_org(self) -> Org:
@@ -288,6 +309,48 @@ class SqliteAppDB(AppDBProtocol):
     def delete_credential(self, credential_id: str) -> bool:
         with self._lock, self._conn:
             cur = self._conn.execute("DELETE FROM user_credentials WHERE id = ?", (credential_id,))
+        return cur.rowcount > 0
+
+    # ---- projects --------------------------------------------------------
+    def get_default_project(self) -> Project:
+        row = self._one("SELECT * FROM projects WHERE id = ?", (_DEFAULT_PROJECT_ID,))
+        assert row is not None, "default project missing — seed failed"
+        return _row_to_project(row)
+
+    def create_project(self, project: Project) -> Project:
+        now = _utcnow()
+        pid = project.id or _uid("proj")
+        with self._lock, self._conn:
+            self._conn.execute(
+                """
+                INSERT INTO projects (id, org_id, name, description, created_at, updated_at)
+                VALUES (?, ?, ?, ?, ?, ?)
+                ON CONFLICT(id) DO UPDATE SET
+                  name=excluded.name,
+                  description=excluded.description,
+                  updated_at=excluded.updated_at
+                """,
+                (pid, project.org_id, project.name, project.description,
+                 project.created_at or now, now),
+            )
+        row = self._one("SELECT * FROM projects WHERE id = ?", (pid,))
+        assert row is not None
+        return _row_to_project(row)
+
+    def get_project(self, project_id: str) -> Optional[Project]:
+        row = self._one("SELECT * FROM projects WHERE id = ?", (project_id,))
+        return _row_to_project(row) if row else None
+
+    def list_projects(self, org_id: str) -> list[Project]:
+        rows = self._all(
+            "SELECT * FROM projects WHERE org_id = ? ORDER BY updated_at DESC",
+            (org_id,),
+        )
+        return [_row_to_project(r) for r in rows]
+
+    def delete_project(self, project_id: str) -> bool:
+        with self._lock, self._conn:
+            cur = self._conn.execute("DELETE FROM projects WHERE id = ?", (project_id,))
         return cur.rowcount > 0
 
     # ---- threads / messages ----------------------------------------------
@@ -597,6 +660,14 @@ def _row_to_credential(r: sqlite3.Row) -> Credential:
         refresh_token=r["refresh_token"], expires_at=r["expires_at"],
         auth_type=r["auth_type"] or "bearer", email=r["email"],
         created_at=r["created_at"], updated_at=r["updated_at"],
+    )
+
+
+def _row_to_project(r: sqlite3.Row) -> Project:
+    return Project(
+        id=r["id"], org_id=r["org_id"], name=r["name"],
+        description=r["description"], created_at=r["created_at"],
+        updated_at=r["updated_at"],
     )
 
 

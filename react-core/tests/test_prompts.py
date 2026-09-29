@@ -22,9 +22,21 @@ def test_qa_prompt_names_all_deliverable_tools(monkeypatch):
     text = _render(monkeypatch, profile="qa")
     assert "analyze_requirements" in text
     assert "generate_gherkin" in text
+    assert "generate_test_cases" in text
+    assert "generate_automation" in text
+    assert "generate_nfr_tests" in text
+    assert "execute_tests" in text
+    assert "build_traceability_matrix" in text
+    assert "export_test_cases" in text
     assert "write_artefact" in text
     assert "request_approval" in text
     assert "ask_user" in text
+    assert "manage_plan" in text
+
+
+def test_coding_prompt_mentions_manage_plan(monkeypatch):
+    text = _render(monkeypatch, profile="coding")
+    assert "manage_plan" in text
 
 
 def test_qa_prompt_states_five_invariants(monkeypatch):

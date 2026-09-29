@@ -43,6 +43,17 @@ class Credential:
 
 
 @dataclass(slots=True)
+class Project:
+    """A named workstream that scopes threads, artefacts, and the vector store."""
+    id: str
+    org_id: str
+    name: str
+    description: Optional[str]
+    created_at: str
+    updated_at: str
+
+
+@dataclass(slots=True)
 class Thread:
     id: str
     org_id: str

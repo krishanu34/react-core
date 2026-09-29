@@ -18,7 +18,12 @@ from .schemas import (
     GherkinStep,
     Scenario,
     StateModel,
+    TestCase,
+    TestCaseStep,
+    TestReport,
+    TestResult,
     TestStrategy,
+    TestSuite,
     derive_gaps_significant,
 )
 from .writer import write_artefact
@@ -33,7 +38,12 @@ __all__ = [
     "GherkinStep",
     "Scenario",
     "StateModel",
+    "TestCase",
+    "TestCaseStep",
+    "TestReport",
+    "TestResult",
     "TestStrategy",
+    "TestSuite",
     "derive_gaps_significant",
     "write_artefact",
 ]

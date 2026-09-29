@@ -205,6 +205,151 @@ class Scenario:
 
 
 @dataclass(slots=True)
+class TestCaseStep:
+    """One numbered step of a manual/functional test case."""
+    action: str
+    expected_result: str = ""
+
+    def to_dict(self) -> dict[str, Any]:
+        return {"action": self.action, "expected_result": self.expected_result}
+
+    @classmethod
+    def from_dict(cls, d: Any) -> "TestCaseStep":
+        if isinstance(d, str):
+            return cls(action=d.strip(), expected_result="")
+        if not isinstance(d, dict):
+            return cls(action=str(d or ""), expected_result="")
+        action = str(d.get("action") or d.get("step") or d.get("text") or "").strip()
+        expected = str(
+            d.get("expected_result") or d.get("expected") or d.get("result") or ""
+        ).strip()
+        return cls(action=action, expected_result=expected)
+
+
+@dataclass(slots=True)
+class TestCase:
+    """A functional / manual test case with numbered steps."""
+    id: str
+    title: str
+    priority: str = "medium"                                  # critical | high | medium | low
+    test_type: str = "functional"                             # functional | manual | negative | ...
+    technique_used: str = "risk-based"
+    preconditions: list[str] = field(default_factory=list)
+    test_data: dict = field(default_factory=dict)
+    steps: list[TestCaseStep] = field(default_factory=list)
+    acceptance_criteria_refs: list[str] = field(default_factory=list)
+
+    def to_dict(self) -> dict[str, Any]:
+        d = asdict(self)
+        d["steps"] = [s.to_dict() for s in self.steps]
+        return d
+
+    @classmethod
+    def from_dict(cls, d: dict[str, Any]) -> "TestCase":
+        td = d.get("test_data")
+        return cls(
+            id=str(d.get("id") or ""),
+            title=str(d.get("title") or d.get("name") or ""),
+            priority=str(d.get("priority") or "medium").lower(),
+            test_type=str(d.get("test_type") or d.get("type") or "functional").lower(),
+            technique_used=str(d.get("technique_used") or d.get("technique") or "risk-based"),
+            preconditions=[str(p) for p in (d.get("preconditions") or [])],
+            test_data=td if isinstance(td, dict) else ({"values": td} if td else {}),
+            steps=[TestCaseStep.from_dict(s) for s in (d.get("steps") or [])],
+            acceptance_criteria_refs=list(
+                d.get("acceptance_criteria_refs") or d.get("requirement_ids") or []
+            ),
+        )
+
+
+@dataclass(slots=True)
+class TestSuite:
+    title: str
+    description: Optional[str] = None
+    test_cases: list[TestCase] = field(default_factory=list)
+    coverage_summary: dict = field(default_factory=dict)
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "title": self.title,
+            "description": self.description,
+            "test_cases": [tc.to_dict() for tc in self.test_cases],
+            "coverage_summary": dict(self.coverage_summary),
+        }
+
+    @classmethod
+    def from_dict(cls, d: dict[str, Any]) -> "TestSuite":
+        return cls(
+            title=str(d.get("title") or ""),
+            description=d.get("description"),
+            test_cases=[TestCase.from_dict(tc) for tc in (d.get("test_cases") or [])],
+            coverage_summary=dict(d.get("coverage_summary") or {}),
+        )
+
+
+@dataclass(slots=True)
+class TestResult:
+    """One executed test's outcome (parsed from a runner's output)."""
+    name: str
+    status: str = "passed"                                    # passed | failed | skipped | error
+    classname: str = ""
+    duration: float = 0.0
+    message: str = ""
+    requirement_refs: list[str] = field(default_factory=list)
+
+    def to_dict(self) -> dict[str, Any]:
+        return asdict(self)
+
+    @classmethod
+    def from_dict(cls, d: dict[str, Any]) -> "TestResult":
+        return cls(
+            name=str(d.get("name") or ""),
+            status=str(d.get("status") or "passed").lower(),
+            classname=str(d.get("classname") or ""),
+            duration=float(d.get("duration") or 0.0),
+            message=str(d.get("message") or ""),
+            requirement_refs=list(d.get("requirement_refs") or []),
+        )
+
+
+@dataclass(slots=True)
+class TestReport:
+    """Result of executing a test suite."""
+    command: str
+    framework: str = ""
+    exit_code: int = 0
+    total: int = 0
+    passed: int = 0
+    failed: int = 0
+    skipped: int = 0
+    errors: int = 0
+    duration: float = 0.0
+    results: list[TestResult] = field(default_factory=list)
+    summary: str = ""
+
+    def to_dict(self) -> dict[str, Any]:
+        d = asdict(self)
+        d["results"] = [r.to_dict() for r in self.results]
+        return d
+
+    @classmethod
+    def from_dict(cls, d: dict[str, Any]) -> "TestReport":
+        return cls(
+            command=str(d.get("command") or ""),
+            framework=str(d.get("framework") or ""),
+            exit_code=int(d.get("exit_code") or 0),
+            total=int(d.get("total") or 0),
+            passed=int(d.get("passed") or 0),
+            failed=int(d.get("failed") or 0),
+            skipped=int(d.get("skipped") or 0),
+            errors=int(d.get("errors") or 0),
+            duration=float(d.get("duration") or 0.0),
+            results=[TestResult.from_dict(r) for r in (d.get("results") or [])],
+            summary=str(d.get("summary") or ""),
+        )
+
+
+@dataclass(slots=True)
 class GherkinStep:
     kind: str            # given | when | then | and | but
     text: str

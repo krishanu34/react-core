@@ -83,7 +83,7 @@ export function ChatInput({ onSubmit, disabled = false }: ChatInputProps) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="rounded-[var(--radius-bell-lg)] border border-bell-border bg-bell-surface shadow-[var(--shadow-bell-md)]"
+      className="rounded-[var(--radius-bell-lg)] border border-bell-border bg-bell-surface shadow-[var(--shadow-bell-md)] transition-shadow focus-within:border-bell-blue/50 focus-within:shadow-[var(--shadow-bell-lg)]"
     >
       {pending.length > 0 && (
         <ul className="flex flex-wrap gap-2 border-b border-bell-border px-3 pb-2 pt-3">
@@ -147,7 +147,7 @@ export function ChatInput({ onSubmit, disabled = false }: ChatInputProps) {
           type="submit"
           aria-label="Send"
           disabled={!canSubmit}
-          className="flex h-10 items-center gap-2 rounded-[var(--radius-bell-pill)] bg-bell-blue px-4 text-sm font-medium text-white transition-colors hover:bg-bell-blue-dark disabled:cursor-not-allowed disabled:bg-bell-border disabled:text-bell-muted"
+          className="bell-gradient flex h-10 items-center gap-2 rounded-[var(--radius-bell-pill)] px-4 text-sm font-medium text-white shadow-[var(--shadow-bell-sm)] transition-all hover:brightness-110 hover:shadow-[var(--shadow-bell-md)] disabled:cursor-not-allowed disabled:bg-none disabled:bg-bell-border disabled:text-bell-muted disabled:shadow-none"
         >
           <span className="hidden sm:inline">Send</span>
           <Send size={16} aria-hidden />

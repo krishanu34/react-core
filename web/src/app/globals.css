@@ -6,10 +6,10 @@
     - Bell Blue     : #0057B8  (primary)
     - Deep Blue     : #003D82  (hover / accents)
     - Sky Blue      : #E8F1FB  (surfaces)
-    - Ink           : #1A1A1A  (body text)
+    - Ink           : #111827  (body text)
     - Slate         : #4A4A4A  (secondary text)
     - Muted         : #767676  (tertiary text)
-    - Border        : #DDDDDD  (dividers)
+    - Border        : #E4E7EC  (dividers)
     - Surface       : #FFFFFF  (page)
     - Off-surface   : #F5F7FA  (chrome)
     - Focus         : #FFB81C  (Bell accent yellow, used sparingly)
@@ -18,25 +18,28 @@
 @theme {
   --color-bell-blue: #0057b8;
   --color-bell-blue-dark: #003d82;
+  --color-bell-blue-bright: #0a6ce0;
   --color-bell-blue-soft: #e8f1fb;
-  --color-bell-ink: #1a1a1a;
-  --color-bell-slate: #4a4a4a;
-  --color-bell-muted: #767676;
-  --color-bell-border: #dddddd;
+  --color-bell-ink: #111827;
+  --color-bell-slate: #475467;
+  --color-bell-muted: #98a2b3;
+  --color-bell-border: #e4e7ec;
   --color-bell-surface: #ffffff;
-  --color-bell-chrome: #f5f7fa;
+  --color-bell-chrome: #f4f6fb;
   --color-bell-accent: #ffb81c;
 
   --font-bell-sans:
     "Inter", "Helvetica Neue", "Helvetica", "Arial", system-ui, sans-serif;
 
-  --radius-bell: 4px;
-  --radius-bell-lg: 8px;
+  --radius-bell: 8px;
+  --radius-bell-lg: 14px;
   --radius-bell-pill: 999px;
 
-  --shadow-bell-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-  --shadow-bell-md: 0 2px 8px rgba(0, 0, 0, 0.08);
-  --shadow-bell-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+  --shadow-bell-sm: 0 1px 2px rgba(16, 24, 40, 0.06), 0 1px 3px rgba(16, 24, 40, 0.05);
+  --shadow-bell-md: 0 4px 14px rgba(16, 24, 40, 0.08), 0 1px 3px rgba(16, 24, 40, 0.04);
+  --shadow-bell-lg: 0 16px 40px rgba(16, 24, 40, 0.14), 0 4px 10px rgba(16, 24, 40, 0.06);
+
+  --gradient-bell: linear-gradient(135deg, #0a6ce0 0%, #0057b8 48%, #003d82 100%);
 }
 
 html,
@@ -48,6 +51,15 @@ body {
   background: var(--color-bell-chrome);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  letter-spacing: -0.006em;
+}
+
+/* Subtle depth behind the whole app — faint brand-tinted wash. */
+body {
+  background-image:
+    radial-gradient(60rem 40rem at 100% -10%, rgba(10, 108, 224, 0.06), transparent 60%),
+    radial-gradient(50rem 40rem at -10% 110%, rgba(0, 61, 130, 0.05), transparent 55%);
+  background-attachment: fixed;
 }
 
 *,
@@ -60,9 +72,9 @@ button {
   font-family: inherit;
 }
 
-/* Focus ring — Bell accent yellow, subtle */
+/* Focus ring — brand blue halo, accessible and on-brand. */
 :where(button, a, input, textarea, [tabindex]):focus-visible {
-  outline: 2px solid var(--color-bell-accent);
+  outline: 2px solid var(--color-bell-blue-bright);
   outline-offset: 2px;
   border-radius: var(--radius-bell);
 }
@@ -73,9 +85,64 @@ button {
   height: 8px;
 }
 .bell-scroll::-webkit-scrollbar-thumb {
-  background: #c8c8c8;
+  background: #cfd6e4;
   border-radius: var(--radius-bell-pill);
+}
+.bell-scroll::-webkit-scrollbar-thumb:hover {
+  background: #b6bfd2;
 }
 .bell-scroll::-webkit-scrollbar-track {
   background: transparent;
+}
+
+/* ---- Brand utilities ---------------------------------------------------- */
+
+.bell-gradient {
+  background-image: var(--gradient-bell);
+}
+
+.bell-text-gradient {
+  background-image: linear-gradient(120deg, #0a6ce0, #003d82);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Frosted surface for overlays / sticky bars. */
+.bell-glass {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: saturate(180%) blur(12px);
+  -webkit-backdrop-filter: saturate(180%) blur(12px);
+}
+
+/* ---- Motion ------------------------------------------------------------- */
+
+@keyframes bellFadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.bell-fade-in {
+  animation: bellFadeInUp 0.34s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes bellShimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bell-fade-in {
+    animation: none;
+  }
 }

@@ -1,11 +1,24 @@
 "use client";
 
-import { AlertCircle, Bug, Sparkles, StopCircle } from "lucide-react";
+import {
+  AlertCircle,
+  Bug,
+  ClipboardCheck,
+  FileSearch,
+  FlaskConical,
+  Sparkles,
+  StopCircle,
+  TestTube2,
+} from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
+import type { LucideIcon } from "lucide-react";
+import { toolLabel } from "@/lib/toolLabels";
 import { answerAgent, debugDownloadUrl, stopAgent, streamAgent } from "@/lib/api";
+import type { PlanItem } from "@/lib/sse";
 import { loadThreadId, saveThreadId } from "@/lib/thread";
 import { ChatInput } from "./ChatInput";
 import { MessageBubble } from "./MessageBubble";
+import { PlanCard } from "./PlanCard";
 import { QuestionCard } from "./QuestionCard";
 import { ToolCallCard } from "./ToolCallCard";
 
@@ -32,6 +45,8 @@ interface ChatQuestion {
   options?: string[];
   items?: string[];
   checkpoint?: string;
+  nextAction?: string;
+  artefacts?: string[];
   createdAt: number;
   answered?: string;
 }
@@ -47,7 +62,19 @@ interface ChatMessageItem extends ChatMessage {
   kind: "message";
 }
 
-type ChatItem = ChatMessageItem | ChatQuestion | ChatError | ChatToolCall;
+interface ChatPlan {
+  kind: "plan";
+  id: string;
+  items: PlanItem[];
+  createdAt: number;
+}
+
+type ChatItem =
+  | ChatMessageItem
+  | ChatQuestion
+  | ChatError
+  | ChatToolCall
+  | ChatPlan;
 
 export interface ChatToolCall {
   kind: "tool_call";
@@ -62,11 +89,33 @@ export interface ChatToolCall {
 
 type Status = "idle" | "streaming" | "awaiting_answer";
 
-const STARTER_PROMPTS = [
-  "Design test scenarios for a checkout flow with card and wallet payments.",
-  "Generate functional test cases from the requirement I paste.",
-  "Draft a Playwright automation skeleton for login and 2FA.",
-  "Summarise acceptance criteria from JIRA-1234 and propose edge cases.",
+const STARTER_PROMPTS: {
+  icon: LucideIcon;
+  title: string;
+  prompt: string;
+}[] = [
+  {
+    icon: FlaskConical,
+    title: "Design test scenarios",
+    prompt:
+      "Design test scenarios for a checkout flow with card and wallet payments.",
+  },
+  {
+    icon: ClipboardCheck,
+    title: "Generate test cases",
+    prompt: "Generate functional test cases from the requirement I paste.",
+  },
+  {
+    icon: TestTube2,
+    title: "Draft automation",
+    prompt: "Draft a Playwright automation skeleton for login and 2FA.",
+  },
+  {
+    icon: FileSearch,
+    title: "Analyse a Jira ticket",
+    prompt:
+      "Summarise acceptance criteria from JIRA-1234 and propose edge cases.",
+  },
 ];
 
 interface ChatProps {
@@ -74,9 +123,18 @@ interface ChatProps {
   onThreadIdChange?: (threadId: string | null) => void;
   /** Notified on every SSE `final` event so the parent can refresh the file tree. */
   onRunFinished?: () => void;
+  /** Project scope for the run; forwarded to the backend on every turn. */
+  projectId?: string | null;
+  /** Open a generated artefact by workspace-relative path (e.g. from a checkpoint). */
+  onOpenArtefact?: (path: string) => void;
 }
 
-export function Chat({ onThreadIdChange, onRunFinished }: ChatProps = {}) {
+export function Chat({
+  onThreadIdChange,
+  onRunFinished,
+  projectId,
+  onOpenArtefact,
+}: ChatProps = {}) {
   const [items, setItems] = useState<ChatItem[]>([]);
   const [status, setStatus] = useState<Status>("idle");
   const [activeTool, setActiveTool] = useState<string | null>(null);
@@ -186,6 +244,13 @@ export function Chat({ onThreadIdChange, onRunFinished }: ChatProps = {}) {
           setActiveTool(null);
           break;
         }
+        case "plan_update": {
+          const planItems = (ev.items as PlanItem[] | undefined) ?? [];
+          if (planItems.length > 0) {
+            setItems((prev) => updateOrAppendPlan(prev, planItems));
+          }
+          break;
+        }
         case "checkpoint_request": {
           const callId = ev.call_id as string;
           pendingCallIdRef.current = callId;
@@ -201,6 +266,8 @@ export function Chat({ onThreadIdChange, onRunFinished }: ChatProps = {}) {
             ],
             items: ev.items as string[] | undefined,
             checkpoint: ev.checkpoint as string | undefined,
+            nextAction: ev.next_action as string | undefined,
+            artefacts: ev.artefacts as string[] | undefined,
             createdAt: Date.now(),
           });
           setStatus("awaiting_answer");
@@ -278,6 +345,7 @@ export function Chat({ onThreadIdChange, onRunFinished }: ChatProps = {}) {
         message: text || describeAttachments(attachments),
         threadId,
         files: attachments,
+        projectId,
         signal: controller.signal,
       });
       await consumeStream(iter);
@@ -364,26 +432,35 @@ export function Chat({ onThreadIdChange, onRunFinished }: ChatProps = {}) {
         ) : (
           <div className="flex flex-col gap-4">
             {items.map((it) => {
+              let node: React.ReactNode;
               if (it.kind === "message") {
-                return <MessageBubble key={it.id} message={it} />;
-              }
-              if (it.kind === "question") {
-                return (
+                node = <MessageBubble message={it} />;
+              } else if (it.kind === "question") {
+                node = (
                   <QuestionCard
-                    key={it.id}
                     question={it.question}
                     options={it.options}
                     items={it.items}
                     checkpoint={it.checkpoint}
+                    nextAction={it.nextAction}
+                    artefacts={it.artefacts}
                     disabled={!!it.answered}
                     onSubmit={submitAnswer}
+                    onOpenArtefact={onOpenArtefact}
                   />
                 );
+              } else if (it.kind === "tool_call") {
+                node = <ToolCallCard call={it} />;
+              } else if (it.kind === "plan") {
+                node = <PlanCard items={it.items} />;
+              } else {
+                node = <ErrorBubble content={it.content} />;
               }
-              if (it.kind === "tool_call") {
-                return <ToolCallCard key={it.id} call={it} />;
-              }
-              return <ErrorBubble key={it.id} content={it.content} />;
+              return (
+                <div key={it.id} className="bell-fade-in">
+                  {node}
+                </div>
+              );
             })}
             {showThinking && <TypingIndicator tool={activeTool} />}
           </div>
@@ -485,6 +562,27 @@ function updateLastToolCall(
   ];
 }
 
+function updateOrAppendPlan(items: ChatItem[], planItems: PlanItem[]): ChatItem[] {
+  // A plan is a single, persistent card per run — later updates replace its
+  // items in place rather than appending a new card each time.
+  for (let i = items.length - 1; i >= 0; i--) {
+    const it = items[i];
+    if (it.kind === "plan") {
+      const updated: ChatPlan = { ...it, items: planItems };
+      return [...items.slice(0, i), updated, ...items.slice(i + 1)];
+    }
+  }
+  return [
+    ...items,
+    {
+      kind: "plan",
+      id: `plan-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      items: planItems,
+      createdAt: Date.now(),
+    },
+  ];
+}
+
 function describeAttachments(files: File[]): string {
   if (files.length === 0) return "";
   return `I've attached ${files.length} file${
@@ -494,30 +592,41 @@ function describeAttachments(files: File[]): string {
 
 function EmptyState({ onPick }: { onPick: (prompt: string) => void }) {
   return (
-    <div className="mx-auto flex max-w-2xl flex-col items-center gap-6 py-10 text-center">
-      <div className="flex h-14 w-14 items-center justify-center rounded-full bg-bell-blue-soft text-bell-blue">
-        <Sparkles size={24} aria-hidden />
+    <div className="bell-fade-in mx-auto flex max-w-2xl flex-col items-center gap-7 py-12 text-center">
+      <div className="relative flex h-16 w-16 items-center justify-center rounded-[var(--radius-bell-lg)] bg-bell-blue-soft text-bell-blue shadow-[var(--shadow-bell-sm)]">
+        <span className="bell-gradient absolute inset-0 rounded-[var(--radius-bell-lg)] opacity-100" />
+        <Sparkles size={28} className="relative text-white" aria-hidden />
       </div>
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight text-bell-ink sm:text-3xl">
-          Start a conversation
+        <h1 className="text-3xl font-semibold tracking-tight text-bell-ink sm:text-4xl">
+          What should we <span className="bell-text-gradient">test</span> today?
         </h1>
-        <p className="mt-2 text-sm text-bell-slate sm:text-base">
+        <p className="mx-auto mt-3 max-w-xl text-[15px] leading-relaxed text-bell-slate">
           Attach requirements, paste a Jira link, or describe the feature you
-          want tested. Bell TAG Engine will plan, design and generate the QA
+          want tested. Bell TAG Engine plans, designs and generates the QA
           artefacts — pausing at each checkpoint for your review.
         </p>
       </div>
 
-      <div className="grid w-full grid-cols-1 gap-2 sm:grid-cols-2">
-        {STARTER_PROMPTS.map((p) => (
+      <div className="grid w-full grid-cols-1 gap-3 sm:grid-cols-2">
+        {STARTER_PROMPTS.map(({ icon: Icon, title, prompt }) => (
           <button
-            key={p}
+            key={title}
             type="button"
-            onClick={() => onPick(p)}
-            className="rounded-[var(--radius-bell-lg)] border border-bell-border bg-bell-surface p-3 text-left text-sm text-bell-slate transition-colors hover:border-bell-blue hover:bg-bell-blue-soft hover:text-bell-blue"
+            onClick={() => onPick(prompt)}
+            className="group flex items-start gap-3 rounded-[var(--radius-bell-lg)] border border-bell-border bg-bell-surface p-4 text-left shadow-[var(--shadow-bell-sm)] transition-all hover:-translate-y-0.5 hover:border-bell-blue/40 hover:shadow-[var(--shadow-bell-md)]"
           >
-            {p}
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--radius-bell)] bg-bell-blue-soft text-bell-blue transition-colors group-hover:bg-bell-blue group-hover:text-white">
+              <Icon size={18} aria-hidden />
+            </span>
+            <span className="min-w-0">
+              <span className="block text-sm font-semibold text-bell-ink">
+                {title}
+              </span>
+              <span className="mt-0.5 block text-[13px] leading-snug text-bell-muted">
+                {prompt}
+              </span>
+            </span>
           </button>
         ))}
       </div>
@@ -525,19 +634,24 @@ function EmptyState({ onPick }: { onPick: (prompt: string) => void }) {
   );
 }
 
-function TypingIndicator({ tool: _tool }: { tool: string | null }) {
-  // Tool activity is now shown as inline ToolCallCard entries. This
-  // indicator is only for the "thinking between tool calls" moments.
+function TypingIndicator({ tool }: { tool: string | null }) {
   return (
     <div
-      className="flex items-center gap-2 self-start rounded-[var(--radius-bell-lg)] border border-bell-border bg-bell-surface px-4 py-3 text-bell-muted shadow-[var(--shadow-bell-sm)]"
+      className="bell-fade-in flex items-center gap-3 self-start rounded-[var(--radius-bell-lg)] border border-bell-border bg-bell-surface px-4 py-3 shadow-[var(--shadow-bell-sm)]"
       aria-live="polite"
-      aria-label="Assistant is thinking"
+      aria-label="Assistant is working"
     >
-      <Dot delay={0} />
-      <Dot delay={150} />
-      <Dot delay={300} />
-      <span className="ml-1 text-xs">Thinking…</span>
+      <span className="bell-gradient flex h-6 w-6 items-center justify-center rounded-full">
+        <Sparkles size={12} className="text-white" aria-hidden />
+      </span>
+      <span className="flex items-center gap-1.5">
+        <Dot delay={0} />
+        <Dot delay={150} />
+        <Dot delay={300} />
+      </span>
+      <span className="text-xs font-medium text-bell-slate">
+        {tool ? `${toolLabel(tool)}…` : "Thinking…"}
+      </span>
     </div>
   );
 }

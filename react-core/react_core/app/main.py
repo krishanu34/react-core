@@ -68,6 +68,7 @@ memory = ConversationMemory(state_dir=settings.state_dir)
 _app_db = get_app_db()
 _ = _app_db.get_default_org()
 _ = _app_db.get_default_user()
+_ = _app_db.get_default_project()
 # One summarizer per process — its cache is keyed on thread_id so cross-thread
 # invalidation is impossible and the LLM cost is at most one call per user turn.
 _summarizer: ConversationSummarizer | None = None
@@ -95,10 +96,21 @@ async def agent_stream(
     message: str = Form(..., description="The user instruction."),
     thread_id: Optional[str] = Form(default=None),
     workspace_path: Optional[str] = Form(default=None),
+    project_id: Optional[str] = Form(default=None),
     max_steps: Optional[int] = Form(default=None),
     files: list[UploadFile] = File(default=[]),
 ):
     tid = thread_id or uuid.uuid4().hex
+
+    # Resolve the project scope: explicit on this turn, else remembered for
+    # the thread, else the seeded default project (pilot: no project picker
+    # required). Validate an explicitly-supplied id exists.
+    pid = (project_id or "").strip() or memory.get_project(tid)
+    if pid and _app_db.get_project(pid) is None:
+        raise HTTPException(status_code=422, detail=f"project_id does not exist: {pid}")
+    if not pid:
+        pid = _app_db.get_default_project().id
+    memory.set_project(tid, pid)
 
     # Resolve workspace: if omitted, auto-create a per-thread scratch dir
     # under state_dir. Required for the agent's file tools; the client
@@ -167,7 +179,7 @@ async def agent_stream(
     user = _app_db.get_default_user()
     registry = ToolRegistry.build_for_workspace(
         ws_abs, thread_id=tid, long_term=long_term,
-        org_id=org.id, user_id=user.id,
+        org_id=org.id, user_id=user.id, project_id=pid,
     )
     thread_memory = ThreadMemory(
         thread_id=tid,
@@ -295,6 +307,61 @@ def agent_history(thread_id: str) -> JSONResponse:
         "workspace_path": memory.get_workspace(thread_id),
         "messages": memory.get_messages(thread_id),
     })
+
+
+# ============================================================================
+#  Projects — named workstreams that scope threads, artefacts, and the
+#  vector store. MVP: all under the default org.
+# ============================================================================
+
+
+class ProjectIn(BaseModel):
+    name: str = Field(description="Display name for the project.")
+    description: Optional[str] = Field(default=None)
+
+
+class ProjectOut(BaseModel):
+    id: str
+    name: str
+    description: Optional[str] = None
+    created_at: str
+    updated_at: str
+
+
+def _project_out(p) -> "ProjectOut":
+    return ProjectOut(
+        id=p.id, name=p.name, description=p.description,
+        created_at=p.created_at, updated_at=p.updated_at,
+    )
+
+
+@app.get("/api/projects", response_model=list[ProjectOut])
+def list_projects() -> list[ProjectOut]:
+    org = _app_db.get_default_org()
+    return [_project_out(p) for p in _app_db.list_projects(org.id)]
+
+
+@app.post("/api/projects", response_model=ProjectOut)
+def create_project(payload: ProjectIn) -> ProjectOut:
+    name = (payload.name or "").strip()
+    if not name:
+        raise HTTPException(status_code=422, detail="name is required")
+    from ..app_db import Project
+    org = _app_db.get_default_org()
+    saved = _app_db.create_project(Project(
+        id="", org_id=org.id, name=name,
+        description=(payload.description or None),
+        created_at="", updated_at="",
+    ))
+    return _project_out(saved)
+
+
+@app.delete("/api/projects/{project_id}")
+def delete_project(project_id: str) -> dict:
+    if _app_db.get_project(project_id) is None:
+        raise HTTPException(status_code=404, detail="project not found")
+    _app_db.delete_project(project_id)
+    return {"ok": True, "project_id": project_id}
 
 
 @app.get("/api/agent/attachments/{thread_id}")

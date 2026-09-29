@@ -39,6 +39,7 @@ export interface StreamAgentInput {
   threadId?: string | null;
   files?: File[];
   workspacePath?: string;
+  projectId?: string | null;
   maxSteps?: number;
   signal?: AbortSignal;
 }
@@ -50,6 +51,7 @@ export async function* streamAgent(
   form.append("message", input.message);
   if (input.threadId) form.append("thread_id", input.threadId);
   if (input.workspacePath) form.append("workspace_path", input.workspacePath);
+  if (input.projectId) form.append("project_id", input.projectId);
   if (input.maxSteps != null) form.append("max_steps", String(input.maxSteps));
   for (const f of input.files ?? []) form.append("files", f, f.name);
 
@@ -125,6 +127,41 @@ export async function fetchHistory(
 
 export function debugDownloadUrl(threadId: string): string {
   return apiUrl(`/api/agent/debug/${threadId}`, threadId);
+}
+
+export interface Project {
+  id: string;
+  name: string;
+  description: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export async function listProjects(): Promise<Project[]> {
+  const res = await fetch(apiUrl("/api/projects"));
+  if (!res.ok) throw new Error(`list projects failed: ${res.status}`);
+  return (await res.json()) as Project[];
+}
+
+export async function createProject(
+  name: string,
+  description?: string,
+): Promise<Project> {
+  const res = await fetch(apiUrl("/api/projects"), {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name, description: description ?? null }),
+  });
+  if (!res.ok) {
+    const detail = await safeReadText(res);
+    throw new Error(`create project failed: ${res.status}${detail ? ` — ${detail}` : ""}`);
+  }
+  return (await res.json()) as Project;
+}
+
+export async function deleteProject(projectId: string): Promise<void> {
+  const res = await fetch(apiUrl(`/api/projects/${projectId}`), { method: "DELETE" });
+  if (!res.ok) throw new Error(`delete project failed: ${res.status}`);
 }
 
 async function safeReadText(res: Response): Promise<string> {

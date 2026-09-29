@@ -3,6 +3,12 @@
  * Payloads mirror react_core/agent/events.py + agent/react_agent.py.
  */
 
+export interface PlanItem {
+  id: string;
+  title: string;
+  status: "pending" | "in_progress" | "completed";
+}
+
 export type AgentEvent =
   | { type: "thread_id"; thread_id: string }
   | { type: "thinking"; step: number }
@@ -15,6 +21,17 @@ export type AgentEvent =
       type: "user_question";
       call_id: string;
       question: string;
+      options?: string[];
+    }
+  | { type: "plan_update"; items: PlanItem[] }
+  | {
+      type: "checkpoint_request";
+      call_id: string;
+      checkpoint?: string;
+      summary: string;
+      items?: string[];
+      next_action?: string;
+      artefacts?: string[];
       options?: string[];
     }
   | { type: "final"; answer: string; steps?: number }

@@ -60,6 +60,16 @@ class ConversationMemory:
             data["workspace_path"] = workspace_path
             self._save(thread_id, data)
 
+    def get_project(self, thread_id: str) -> str | None:
+        with self._lock:
+            return self._load(thread_id).get("project_id")
+
+    def set_project(self, thread_id: str, project_id: str | None) -> None:
+        with self._lock:
+            data = self._load(thread_id)
+            data["project_id"] = project_id
+            self._save(thread_id, data)
+
     def get_messages(self, thread_id: str) -> list[dict[str, Any]]:
         with self._lock:
             return list(self._load(thread_id).get("messages", []))

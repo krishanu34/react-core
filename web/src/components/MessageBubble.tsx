@@ -16,7 +16,7 @@ export function MessageBubble({ message }: { message: ChatMessage }) {
   if (isUser) {
     return (
       <div className="flex w-full justify-end" role="listitem">
-        <div className="flex max-w-[85%] flex-col gap-2 rounded-[var(--radius-bell-lg)] bg-bell-blue px-4 py-3 text-[15px] leading-relaxed text-white shadow-[var(--shadow-bell-sm)] sm:max-w-[70%]">
+        <div className="bell-gradient flex max-w-[85%] flex-col gap-2 rounded-[var(--radius-bell-lg)] rounded-br-md px-4 py-3 text-[15px] leading-relaxed text-white shadow-[var(--shadow-bell-md)] sm:max-w-[70%]">
           {message.content && (
             <p className="whitespace-pre-wrap break-words">
               {message.content}
@@ -55,10 +55,10 @@ export function MessageBubble({ message }: { message: ChatMessage }) {
       className="flex w-full max-w-full flex-col gap-3 rounded-[var(--radius-bell-lg)] border border-bell-border bg-bell-surface p-5 shadow-[var(--shadow-bell-sm)]"
     >
       <header className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-bell-slate">
-        <span className="flex h-6 w-6 items-center justify-center rounded-full bg-bell-blue-soft text-bell-blue">
+        <span className="bell-gradient flex h-6 w-6 items-center justify-center rounded-full text-white">
           <Sparkles size={12} aria-hidden />
         </span>
-        Assistant
+        TAG Engine
         <span className="ml-auto font-normal normal-case text-bell-muted">
           {time}
         </span>

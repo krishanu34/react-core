@@ -15,14 +15,20 @@ from .analyze_requirements import AnalyzeRequirementsTool
 from .ask_user import AskUserTool
 from .base import BaseTool, signature_from_schema
 from .batch_read_files import BatchReadFilesTool
+from .build_traceability_matrix import BuildTraceabilityMatrixTool
 from .code_edit import CodeEditTool
 from .confluence_fetch_page import ConfluenceFetchPageTool
 from .confluence_page_extract import ConfluencePageExtractTool
 from .confluence_search import ConfluenceSearchTool
 from .create_entry import CreateEntryTool
 from .delete_entry import DeleteEntryTool
+from .execute_tests import ExecuteTestsTool
+from .export_test_cases import ExportTestCasesTool
 from .file_search import FileSearchTool
+from .generate_automation import GenerateAutomationTool
 from .generate_gherkin import GenerateGherkinTool
+from .generate_nfr_tests import GenerateNfrTestsTool
+from .generate_test_cases import GenerateTestCasesTool
 from .grep_search import GrepSearchTool
 from .index_document import IndexDocumentTool
 from .jira_fetch_issue import JiraFetchIssueTool
@@ -31,6 +37,7 @@ from .jira_search import JiraSearchTool
 from .list_attachments import ListAttachmentsTool
 from .list_directory import ListDirectoryTool
 from .list_indexed_sources import ListIndexedSourcesTool
+from .manage_plan import ManagePlanTool
 from .read_attachment import ReadAttachmentTool
 from .read_file import ReadFileTool
 from .remember import RememberTool
@@ -40,6 +47,7 @@ from .run_terminal import RunTerminalTool
 from .search_semantic import SearchSemanticTool
 from .web_fetch import WebFetchTool
 from .workspace_tree import WorkspaceTreeTool
+from .write_artefact import WriteArtefactTool
 from .write_file import WriteFileTool
 
 # Tool classes that take (workspace) only.
@@ -81,9 +89,11 @@ class ToolRegistry:
 
         profile = (os.getenv("PROMPT_PROFILE") or "qa").strip().lower()
 
-        # ask_user is always available (clarification-only). request_approval
+        # ask_user and manage_plan are always available (clarification and
+        # optional progress checklist, neither QA-specific). request_approval
         # is a QA-only checkpoint tool.
         tools.append(AskUserTool(workspace, thread_id=thread_id))
+        tools.append(ManagePlanTool(workspace))
         if profile != "coding":
             tools.append(RequestApprovalTool(workspace, thread_id=thread_id))
             # Attachments
@@ -103,7 +113,28 @@ class ToolRegistry:
             tools.append(ListIndexedSourcesTool(workspace, org_id=org_id, project_id=project_id))
             # QA-layer tools (spec: docs/qa-layer-spec.md)
             tools.append(AnalyzeRequirementsTool(workspace))
+            tools.append(WriteArtefactTool(
+                workspace, org_id=org_id, thread_id=thread_id, project_id=project_id,
+            ))
             tools.append(GenerateGherkinTool(
+                workspace, org_id=org_id, thread_id=thread_id, project_id=project_id,
+            ))
+            tools.append(GenerateTestCasesTool(
+                workspace, org_id=org_id, thread_id=thread_id, project_id=project_id,
+            ))
+            tools.append(GenerateAutomationTool(
+                workspace, org_id=org_id, thread_id=thread_id, project_id=project_id,
+            ))
+            tools.append(GenerateNfrTestsTool(
+                workspace, org_id=org_id, thread_id=thread_id, project_id=project_id,
+            ))
+            tools.append(ExecuteTestsTool(
+                workspace, org_id=org_id, thread_id=thread_id, project_id=project_id,
+            ))
+            tools.append(BuildTraceabilityMatrixTool(
+                workspace, org_id=org_id, thread_id=thread_id, project_id=project_id,
+            ))
+            tools.append(ExportTestCasesTool(
                 workspace, org_id=org_id, thread_id=thread_id, project_id=project_id,
             ))
 

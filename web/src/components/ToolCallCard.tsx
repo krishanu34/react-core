@@ -9,6 +9,7 @@ import {
   Wrench,
 } from "lucide-react";
 import { useState } from "react";
+import { toolLabel } from "@/lib/toolLabels";
 import type { ChatToolCall } from "./Chat";
 
 interface ToolCallCardProps {
@@ -46,11 +47,8 @@ export function ToolCallCard({ call }: ToolCallCardProps) {
 
         <StatusIcon status={call.status} />
 
-        <span className="flex items-center gap-1">
-          <span className="text-xs uppercase tracking-wide text-bell-muted">tool</span>
-          <code className="rounded bg-bell-chrome px-1.5 py-0.5 font-mono text-[13px] text-bell-ink">
-            {call.tool}
-          </code>
+        <span className="text-[13px] font-medium text-bell-ink">
+          {toolLabel(call.tool)}
         </span>
 
         {typeof call.index === "number" && (
@@ -64,6 +62,12 @@ export function ToolCallCard({ call }: ToolCallCardProps) {
 
       {open && (
         <div className="flex flex-col gap-2 border-t border-bell-border px-3 py-2">
+          <div className="flex items-center gap-1.5 text-[11px] text-bell-muted">
+            <span className="uppercase tracking-wide">tool</span>
+            <code className="rounded bg-bell-chrome px-1.5 py-0.5 font-mono text-bell-slate">
+              {call.tool}
+            </code>
+          </div>
           <Section label="Input">
             <PayloadBlock value={call.input} />
           </Section>

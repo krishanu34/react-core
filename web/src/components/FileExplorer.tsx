@@ -61,7 +61,7 @@ export function FileExplorer({
 
   return (
     <aside
-      className="flex h-full min-h-0 w-64 flex-col border-r border-bell-border bg-bell-surface"
+      className="flex h-full min-h-0 w-full flex-col border-r border-bell-border bg-bell-surface"
       aria-label="Generated files"
     >
       <header className="flex items-center justify-between border-b border-bell-border px-3 py-2 text-xs font-semibold uppercase tracking-wide text-bell-slate">

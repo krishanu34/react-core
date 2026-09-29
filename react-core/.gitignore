@@ -1,7 +1,3 @@
-# Env files
-.env
-.env.local
-
 # Python cache & test artefacts
 __pycache__/
 *.py[cod]
@@ -13,3 +9,4 @@ __pycache__/
 
 # State dir (per-thread workspaces, vector store, App DB)
 .react-core/
+.react-core/*
