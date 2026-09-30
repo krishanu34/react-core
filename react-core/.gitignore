@@ -1,3 +1,7 @@
+# Env files
+.env
+.env.local
+
 # Python cache & test artefacts
 __pycache__/
 *.py[cod]
